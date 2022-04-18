@@ -1,5 +1,6 @@
 
 from os import sep
+
 from textwrap import indent
 
 
@@ -61,6 +62,7 @@ class PyComponent(list):
             return f'<{self.tag}{props}/>{childs}'
 
 
+            
 
     def dump(self,out:str,ident=0):
         with open(out,'w') as arq:
