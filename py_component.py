@@ -26,42 +26,32 @@ class PyComponent(list):
             text_props+= f' {key}="{self.props[key]}"'
         return text_props
     
-    def _render_childs(self,ident:int)->str:
+    def _render_childs(self,ident:int,acumulated_ident:int)->str:
         rendered_childs = ''
-        ident_text = self.create_ident_text(ident + ident)
-        old_ident = self.create_ident_text(ident)
         for child in self:
             if hasattr(child,'render'):
-                rendered_childs+= old_ident + child.render(ident) + old_ident
+                rendered_childs+=  child.render(ident,acumulated_ident+ident) 
             else:
                 rendered_childs+=str(child)
-
+    
         return rendered_childs 
 
-    @staticmethod
-    def create_ident_text(ident:int)->str:
-        ident_text = '\n'
-        for x in range(ident):
-            ident_text+=' '
-        return ident_text
-        
-    def render(self, ident=4,old_ident=4)->str:
-        
+
+    def render(self, ident=4,acumulated_ident=0)->str:
         props = self._render_props()
-        childs = self._render_childs(ident)
-        ident_text = ''
+        childs = self._render_childs(ident,acumulated_ident)
+        ident_text = self.create_ident_text(acumulated_ident)
         if not self.tag:
             return childs
             
         if self.category == 'normal':
-            return f'<{self.tag}{props}>{childs}<{self.tag}/>'
+            return f'{ident_text}<{self.tag}{props}>{childs}{ident_text}<{self.tag}/>'
 
         if self.category == 'auto-close':
             return f'<{self.tag}{props}/>'
 
         if self.category == 'unique':
             return f'<{self.tag}{props}/>{childs}'
-
 
 
 
@@ -72,3 +62,10 @@ class PyComponent(list):
 
 
 
+    @staticmethod
+    def create_ident_text(ident:int)->str:
+        ident_text = '\n'
+        for x in range(ident):
+            ident_text+=' '
+        return ident_text
+        
