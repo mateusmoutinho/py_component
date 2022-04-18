@@ -1,7 +1,9 @@
 
+from copy import deepcopy
 from os import sep
 
 from textwrap import indent
+from typing import NamedTuple
 
 
 class PyComponent(list):
@@ -62,14 +64,36 @@ class PyComponent(list):
             return f'<{self.tag}{props}/>{childs}'
 
 
-            
+    
 
     def dump(self,out:str,ident=0):
         with open(out,'w') as arq:
             arq.write(self.dumps(ident))
 
 
-
+    def replicator(self,use_props=True):    
+        def wraper(*args):
+            component = deepcopy(self)    
+            ref = self.split_args_with_props(*args)
+            if use_props:
+                component.props = {**component.props, **ref['props']}
+                component.append(*ref['args'])
+            else:
+                component.append(*args)
+            return component
+        return wraper
+    
+    @staticmethod
+    def split_args_with_props(*args)->dict:
+        ref = {'props':{},'args':[]}
+        if len(args) == 0:
+            return ref 
+        if args[0].__class__ == dict:
+            ref['props'] = args[0]
+            ref['args'] = args[1::]
+        else:
+            ref['args'] = args
+        return ref 
 
     @staticmethod
     def create_ident_text(ident:int)->str:
