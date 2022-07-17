@@ -5,14 +5,19 @@ from os import sep
 from textwrap import indent
 from typing import NamedTuple
 
+from py_component.props import Props
+from py_component.tag_types import *
+
 
 class PyComponent:
 
-    def __init__(self,tag:str=None,props:dict={},self_close:bool=False) -> None:
+    def __init__(self,tag:str=None,props:dict={},tag_type:str=DEFAULT) -> None:
         self.childs = []
         self.props = props
         self.tag = tag 
-        self.self_close = self_close
+        if tag_type not in VALID_TAG_TYPES:
+            raise AttributeError(f'{tag_type} is invalid')
+        self._tag_type = tag_type
 
 
     def append(self,*elements):
@@ -34,21 +39,23 @@ class PyComponent:
                 text+=f'{child} '
         return text 
 
-    def _render_props(self):
-        text = ''
-        for key,value in self.props.items():
-            text+=f'{key}="{value}" '
-        return text 
 
     def _render_component(self)->str:    
         child_text = self._render_childs()
     
         if self.tag:
-            props_text = self._render_props()
-            if self.self_close:
-                return  f'<{self.tag} {props_text}/>'
-            else:
+
+            props_text = Props(self.props).render()
+
+            if self._tag_type == DEFAULT:
                 return  f'<{self.tag} {props_text}>{child_text}</{self.tag}>'
+
+            if self._tag_type == NO_CLOSE:
+                return f'<{self.tag} {props_text}>'
+
+            if self._tag_type == AUTO_CLOSE:
+                return  f'<{self.tag} {props_text}/>'
+        
         else:
             return child_text
     
