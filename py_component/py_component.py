@@ -3,7 +3,7 @@ from copy import deepcopy
 from os import sep
 
 from textwrap import indent
-from typing import NamedTuple
+from typing import Callable, NamedTuple
 
 from py_component.props import Props
 from py_component.tag_types import *
@@ -12,20 +12,25 @@ from py_component.tag_types import *
 class PyComponent:
 
     def __init__(self,tag:str=None,props:dict={},tag_type:str=DEFAULT) -> None:
+        
         self.childs = []
         self.props = props
+
         self.tag = tag 
         if tag_type not in VALID_TAG_TYPES:
             raise AttributeError(f'{tag_type} is invalid')
         self._tag_type = tag_type
 
 
-    def append(self,*elements):
+
+   
+    
+    def append_childs(self,*elements):
         for element in elements:
                 self.childs.append(element)
         return self 
 
-    
+
     def _render_childs(self):
         text = ''
         for child in self.childs:
