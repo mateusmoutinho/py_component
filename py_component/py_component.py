@@ -39,7 +39,7 @@ class PyComponent:
                 text+=f'{child} '
         return text 
 
-
+    
     def render(self)->str:    
         child_text = self._render_childs()
     
