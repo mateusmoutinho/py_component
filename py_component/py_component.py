@@ -25,7 +25,7 @@ class PyComponent:
                 self.childs.append(element)
         return self 
 
-
+    
     def _render_childs(self):
         text = ''
         for child in self.childs:
@@ -58,6 +58,7 @@ class PyComponent:
         
         else:
             return child_text
+    
     
     def dumps(self,ident=4):
         text = self.render()
