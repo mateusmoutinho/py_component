@@ -40,7 +40,7 @@ class PyComponent:
         return text 
 
 
-    def _render_component(self)->str:    
+    def render(self)->str:    
         child_text = self._render_childs()
     
         if self.tag:
@@ -59,7 +59,7 @@ class PyComponent:
         else:
             return child_text
     
-    def render(self,ident=4):
-        text = self._render_component()
+    def dumps(self,ident=4):
+        text = self.render()
         return text
 
