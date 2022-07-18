@@ -1,6 +1,7 @@
 
 from copy import deepcopy
 from os import sep
+import re
 
 from textwrap import indent
 from typing import Callable, NamedTuple
@@ -23,8 +24,22 @@ class PyComponent:
 
 
 
-   
     
+    
+    def find_element(self,filter_function:Callable):
+        for child in self.childs:
+            
+            result = filter_function(child)
+            if result: return child 
+            
+            if child.__class__ == PyComponent:
+                element = child._find_element(filter_function)
+                if element:return element
+            
+
+            
+
+        
     def append_childs(self,*elements):
         for element in elements:
                 self.childs.append(element)

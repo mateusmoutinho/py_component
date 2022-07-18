@@ -13,7 +13,7 @@ def creates_tag_creator(tag:str,tag_type:str=DEFAULT):
                 elements = elements[1::]
         
         component = PyComponent(tag,props,tag_type)
-        component.append(*elements)
+        component.append_childs(*elements)
         
         return component
     return tag_creator
