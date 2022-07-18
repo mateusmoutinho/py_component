@@ -23,19 +23,20 @@ class PyComponent:
         self._tag_type = tag_type
 
 
+    def get_prop(self,prop:str):
+        return self.props.get(prop)
+    
+    
+    
+    def find_child_by_function(self,filter_function:Callable):
+        for child in self.childs:        
+            if child.__class__ != PyComponent:return 
+            result:PyComponent = filter_function(child)
+            if result:return child
+            element:PyComponent = child.find_child_by_function(filter_function)
+            if element:return element
 
-    
-    
-    def find_element(self,filter_function:Callable):
-        for child in self.childs:
-            
-            result = filter_function(child)
-            if result: return child 
-            
-            if child.__class__ == PyComponent:
-                element = child._find_element(filter_function)
-                if element:return element
-            
+
 
             
 
