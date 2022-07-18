@@ -4,7 +4,7 @@ from os import sep
 import re
 
 from textwrap import indent
-from typing import Callable, NamedTuple
+from typing import Any, Callable, NamedTuple
 
 from py_component.props import Props
 from py_component.tag_types import *
@@ -26,21 +26,36 @@ class PyComponent:
     def get_prop(self,prop:str):
         return self.props.get(prop)
     
-    
-    
-    def find_child_by_function(self,filter_function:Callable):
-        for child in self.childs:        
-            if child.__class__ != PyComponent:return 
-            result:PyComponent = filter_function(child)
+    def set_prop(self,prop:str,value:Any):
+        self.props[prop] = value
+
+
+    def find_child_by_function(self,filter_function:Callable):        
+        for child in self.childs: 
+                   
+            result:bool = filter_function(child)
             if result:return child
-            element:PyComponent = child.find_child_by_function(filter_function)
-            if element:return element
+
+            if child.__class__== PyComponent:
+                child:PyComponent
+                element:PyComponent = child.find_child_by_function(filter_function)
+                if element:return element
 
 
+    def find_child_component_by_function(self,filter_function:Callable):
+        def wraper_finder(child:Any):
+            if child.__class__!= PyComponent:
+                return False 
+            return filter_function(child)
+        return self.find_child_by_function(wraper_finder)
+    
 
-            
+    def find_by_id(self,id:str):
+        return self.find_child_component_by_function(
+            lambda child:child.get_prop('id') == id 
+        )
 
-        
+    
     def append_childs(self,*elements):
         for element in elements:
                 self.childs.append(element)
