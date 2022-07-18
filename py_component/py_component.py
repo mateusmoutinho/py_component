@@ -30,28 +30,22 @@ class PyComponent:
         self.props[prop] = value
 
 
-    def find_child_by_function(self,filter_function:Callable):        
+    def find_by_function(self,filter_function:Callable):        
         for child in self.childs: 
-                   
+
+            if child.__class__!= PyComponent:return 
+            child:PyComponent
+            
             result:bool = filter_function(child)
             if result:return child
 
-            if child.__class__== PyComponent:
-                child:PyComponent
-                element:PyComponent = child.find_child_by_function(filter_function)
-                if element:return element
+            element:PyComponent = child.find_by_function(filter_function)
+            if element:return element
 
 
-    def find_child_component_by_function(self,filter_function:Callable):
-        def wraper_finder(child:Any):
-            if child.__class__!= PyComponent:
-                return False 
-            return filter_function(child)
-        return self.find_child_by_function(wraper_finder)
-    
 
     def find_by_id(self,id:str):
-        return self.find_child_component_by_function(
+        return self.find_by_function(
             lambda child:child.get_prop('id') == id 
         )
 
